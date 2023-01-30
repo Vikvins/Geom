@@ -7,5 +7,4 @@ public class Main {
         App.start(Application::new);
     }
 
-
 }
