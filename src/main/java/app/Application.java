@@ -2,6 +2,7 @@ package app;
 
 import io.github.humbleui.jwm.*;
 
+import java.io.File;
 import java.util.function.Consumer;
 
 /**
@@ -29,6 +30,12 @@ public class Application implements Consumer<Event> {
         window.setWindowSize(900, 900);
         // задаём его положение
         window.setWindowPosition(100, 100);
+
+        // задаём иконку
+        switch (Platform.CURRENT) {
+            case WINDOWS -> window.setIcon(new File("src/main/resources/windows.ico"));
+            case MACOS -> window.setIcon(new File("src/main/resources/macos.icns"));
+        }
     }
 
     /**
