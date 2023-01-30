@@ -80,7 +80,7 @@ public class Application implements Consumer<Event> {
             // получаем поверхность рисования
             Surface s = ee.getSurface();
             // очищаем её канвас заданным цветом
-            s.getCanvas().clear(0xFF264653);
+            s.getCanvas().clear(Colors.APP_BACKGROUND_COLOR);
             }
         }
     }
