@@ -108,5 +108,10 @@ public class Application implements Consumer<Event> {
         canvas.drawRRect(rectCS.getRRect(4), paint);
         // восстанавливаем состояние канваса
         canvas.restore();
+
+        /**
+         * радиус скругления элементов
+         */
+        public static final int C_RAD_IN_PX = 4;
     }
 }
