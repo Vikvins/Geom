@@ -80,5 +80,4 @@ public abstract class Panel implements Consumer<Event> {
      * @param windowCS СК окна
      */
     public abstract void paintImpl(Canvas canvas, CoordinateSystem2i windowCS);
-
 }
