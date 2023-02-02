@@ -6,6 +6,7 @@ import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.Paint;
 import io.github.humbleui.skija.RRect;
 import io.github.humbleui.skija.Surface;
+import misc.CoordinateSystem2i;
 import misc.Misc;
 
 import java.io.File;
@@ -86,29 +87,25 @@ public class Application implements Consumer<Event> {
             // получаем поверхность рисования
             Surface s = ee.getSurface();
             // очищаем её канвас заданным цветом
-            paint(s.getCanvas(), s.getWidth(), s.getHeight());
+            paint(s.getCanvas(), new CoordinateSystem2i(s.getWidth(), s.getHeight()));
         }
     }
 
-    public void paint(Canvas canvas, int height, int width) {
+    public void paint(Canvas canvas, CoordinateSystem2i windowCS) {
         // запоминаем изменения (пока что там просто заливка цветом)
         canvas.save();
         // очищаем канвас
         canvas.clear(APP_BACKGROUND_COLOR);
-
-        // координаты левого верхнего края окна
-        int rX = width / 3;
-        int rY = height / 3;
-        // ширина и высота
-        int rWidth = width / 3;
-        int rHeight = height / 3;
         // создаём кисть
         Paint paint = new Paint();
         // задаём цвет рисования
         paint.setColor(Misc.getColor(100, 255, 255, 255));
+        CoordinateSystem2i rectCS = new CoordinateSystem2i(
+                windowCS.getSize().x / 3, windowCS.getSize().y / 3,
+                windowCS.getSize().x / 3, windowCS.getSize().y / 3
+        );
         // рисуем квадрат
-        canvas.drawRRect(RRect.makeXYWH(rX, rY, rWidth, rHeight, 4), paint);
-
+        canvas.drawRRect(rectCS.getRRect(4), paint);
         // восстанавливаем состояние канваса
         canvas.restore();
     }
