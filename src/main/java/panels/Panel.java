@@ -1,6 +1,7 @@
 package panels;
 
-import io.github.humbleui.jwm.*;
+import io.github.humbleui.jwm.Event;
+import io.github.humbleui.jwm.Window;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.Paint;
 import misc.CoordinateSystem2i;
