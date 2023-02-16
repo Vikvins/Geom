@@ -50,7 +50,11 @@ public class Application implements Consumer<Event> {
         // делаем окно видимым
         window.setVisible(true);
 
-        label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING, "Привет, мир!");
+        // создаём первый заголовок
+        label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
+                "Привет, мир!", true, true);
+        // задаём обработчиком событий текущий объект
+        window.setEventListener(this);
 
         window.setTitle("Java 2D");
         // задаём размер окна
