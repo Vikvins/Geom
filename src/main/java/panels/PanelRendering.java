@@ -1,21 +1,26 @@
 package panels;
 
-import controls.Label;
-import io.github.humbleui.jwm.*;
+import app.Point;
+import app.Task;
+import io.github.humbleui.jwm.Event;
+import io.github.humbleui.jwm.Window;
 import io.github.humbleui.skija.Canvas;
+import misc.CoordinateSystem2d;
 import misc.CoordinateSystem2i;
+import misc.Vector2d;
 
-import static app.Application.PANEL_PADDING;
-import static app.Colors.PANEL_BACKGROUND_COLOR;
+import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
+
 
 /**
- * Панель управления
+ * Панель рисования
  */
 public class PanelRendering extends GridPanel {
     /**
-     * Заголовок
+     * Представление проблемы
      */
-    private final Label label;
+    public static Task task;
 
     /**
      * Панель управления
@@ -37,10 +42,21 @@ public class PanelRendering extends GridPanel {
     ) {
         super(window, drawBG, color, padding, gridWidth, gridHeight, gridX, gridY, colspan, rowspan);
 
-        // создаём первый заголовок
-        label = new Label(window, false, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
-                1, 1, 0, 0, 1, 1, "Панель рендеринга", true, true);
+        // ОСК от [-10.0,-10.0] до [10.0,10.0]
+        CoordinateSystem2d cs = new CoordinateSystem2d(
+                new Vector2d(-10.0, -10.0), new Vector2d(10.0, 10.0)
+        );
 
+        // создаём массив случайных точек
+        ArrayList<Point> points = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            // получаем случайное множество
+            Point.PointSet pointSet = ThreadLocalRandom.current().nextBoolean() ?
+                    Point.PointSet.FIRST_SET : Point.PointSet.SECOND_SET;
+            // добавляем точку в случайном месте ОСК в указанное множество
+            points.add(new Point(cs.getRandomCoords(), pointSet));
+        }
+        task = new Task(cs, points);
 
     }
 
@@ -62,6 +78,6 @@ public class PanelRendering extends GridPanel {
      */
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
-        label.paint(canvas, windowCS);
+        task.paint(canvas, windowCS);
     }
 }
