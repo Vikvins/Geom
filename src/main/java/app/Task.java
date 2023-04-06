@@ -102,8 +102,8 @@ public class Task {
     public void addPoint(Vector2d pos, Point.PointSet pointSet) {
         Point newPoint = new Point(pos, pointSet);
         points.add(newPoint);
-
-
+        // Добавляем в лог запись информации
+        PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
     }
 
 

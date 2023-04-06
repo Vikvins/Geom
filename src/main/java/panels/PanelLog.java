@@ -3,19 +3,91 @@ package panels;
 import controls.Label;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.skija.Canvas;
+import io.github.humbleui.skija.FontMetrics;
+import io.github.humbleui.skija.Paint;
 import misc.CoordinateSystem2i;
+import misc.Misc;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import static app.Application.PANEL_PADDING;
 import static app.Colors.PANEL_BACKGROUND_COLOR;
+import static app.Fonts.FONT12;
 
 /**
  * Панель управления
  */
 public class PanelLog extends GridPanel {
     /**
-     * Заголовок
+     * Кол-во строчек лога
      */
-    private final Label label;
+    private static final int LOG_LINES_CNT = 15;
+    /**
+     * Тип записи
+     */
+    enum RecordType {
+        /**
+         * Информация
+         */
+        INFO,
+        /**
+         * Предупреждение
+         */
+        WARNING,
+        /**
+         * Ошибка
+         */
+        ERROR,
+        /**
+         * Успех
+         */
+        SUCCESS
+    }
+
+    /**
+     * Запись
+     */
+   static class Record {
+        /**
+         * Тип
+         */
+        private final RecordType recordType;
+        /**
+         * Текст
+         */
+        private final String text;
+        private final Date date;
+
+        /**
+         * Конструктор
+         */
+        Record(RecordType recordType, String text, Date date) {
+            this.recordType = recordType;
+            this.text = text;
+            this.date = date;
+        }
+
+        /**
+         * Строковое представление объекта
+         *
+         * @return строковое представление объекта
+         */
+        @Override
+        public String toString() {
+            return new SimpleDateFormat("  HH:mm:ss").format(date) + ": " + text;
+        }
+    }
+
+
+    /**
+     * Список записей лога
+     */
+    private static final List<Record> logs = new ArrayList<>();
+
 
     /**
      * Панель управления
@@ -31,16 +103,33 @@ public class PanelLog extends GridPanel {
      * @param colspan    кол-во колонок, занимаемых панелью
      * @param rowspan    кол-во строк, занимаемых панелью
      */
+
+    /**
+     * Максимальная длина строки лога
+     */
+    private static final int MAX_LOG_LINE_LENGTH = 80;
+
+    /**
+     * Добавить в лога
+     *
+     * @param recordType тип записи
+     * @param text       текст записи
+     */
+    public static void addToLog(RecordType recordType, String text) {
+        for (String line : text.split("\n")) {
+            for (String limitedLine : Misc.limit(line, MAX_LOG_LINE_LENGTH)) {
+                while (logs.size() > LOG_LINES_CNT)
+                    logs.remove(0);
+                logs.add(new Record(recordType, limitedLine, Calendar.getInstance().getTime()));
+            }
+        }
+    }
+
     public PanelLog(
             Window window, boolean drawBG, int color, int padding, int gridWidth, int gridHeight,
             int gridX, int gridY, int colspan, int rowspan
     ) {
         super(window, drawBG, color, padding, gridWidth, gridHeight, gridX, gridY, colspan, rowspan);
-
-        // создаём первый заголовок
-        label = new Label(window, false, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
-                1, 1, 0, 0, 1, 1, "Панель лог", true, true);
-
 
     }
 
@@ -62,6 +151,78 @@ public class PanelLog extends GridPanel {
      */
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
-        label.paint(canvas, windowCS);
+        // создаём перо
+        try (Paint paint = new Paint()) {
+            // получаем метрики шрифта
+            FontMetrics metrics = FONT12.getMetrics();
+            // сохраняем область рисования
+            canvas.save();
+            // смещаем область рисования
+            canvas.translate(padding, windowCS.getSize().y - padding - metrics.getDescent());
+            // перебираем записи лога
+            for (int i = logs.size() - 1; i >= 0; --i) {
+                // получаем запись лога
+                Record log = logs.get(i);
+                // задаём цвет лога
+                paint.setColor(getColor(log.recordType));
+                // выводим строку на экран
+                canvas.drawString(log.toString(), 0, 0, FONT12, paint);
+                // смещаем область к следующей линии
+                canvas.translate(0, -metrics.getCapHeight() - 8);
+            }
+            // восстанавливаем область рисования
+            canvas.restore();
+        }
+    }
+
+    /**
+     * Добавить info запись
+     *
+     * @param text текст записи
+     */
+    public static void success(String text) {
+        addToLog(RecordType.SUCCESS, text);
+    }
+
+    /**
+     * Добавить info запись
+     *
+     * @param text текст записи
+     */
+    public static void info(String text) {
+        addToLog(RecordType.INFO, text);
+    }
+
+    /**
+     * Добавить warning запись
+     *
+     * @param text текст записи
+     */
+    public static void warning(String text) {
+        addToLog(RecordType.WARNING, text);
+    }
+
+    /**
+     * Добавить error запись
+     *
+     * @param text текст записи
+     */
+    public static void error(String text) {
+        addToLog(RecordType.ERROR, text);
+    }
+
+    /**
+     * Получить цвет строки лога
+     *
+     * @param recordType тип записи
+     * @return цвет строки лога
+     */
+    public static int getColor(RecordType recordType) {
+        return switch (recordType) {
+            case INFO -> Misc.getColor(144, 255, 255, 255);
+            case WARNING -> Misc.getColor(144, 255, 255, 0);
+            case ERROR -> Misc.getColor(144, 255, 0, 0);
+            case SUCCESS -> Misc.getColor(144, 0, 255, 0);
+        };
     }
 }
