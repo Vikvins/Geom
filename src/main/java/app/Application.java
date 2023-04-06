@@ -6,6 +6,7 @@ import io.github.humbleui.jwm.skija.EventFrameSkija;
 import io.github.humbleui.skija.Canvas;
 import io.github.humbleui.skija.Surface;
 import misc.CoordinateSystem2i;
+import misc.Vector2i;
 import panels.PanelControl;
 import panels.PanelHelp;
 import panels.PanelLog;
@@ -77,10 +78,7 @@ public class Application implements Consumer<Event> {
     public Application() {
         // создаём окно
         window = App.makeWindow();
-        // задаём обработчиком событий текущий объект
-        window.setEventListener(this);
-        // делаем окно видимым
-        window.setVisible(true);
+
         // создаём первый заголовок
         label = new Label(window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING,
                 4, 4, 1, 1, 1, 1, "Привет, мир!", true, true);
@@ -115,6 +113,10 @@ public class Application implements Consumer<Event> {
         );
 
 
+        // задаём обработчиком событий текущий объект
+        window.setEventListener(this);
+        // делаем окно видимым
+        window.setVisible(true);
         // задаём обработчиком событий текущий объект
         window.setEventListener(this);
 
@@ -173,6 +175,11 @@ public class Application implements Consumer<Event> {
             // очищаем её канвас заданным цветом
             paint(s.getCanvas(), new CoordinateSystem2i(s.getWidth(), s.getHeight()));
         }
+        panelControl.accept(e);
+        panelRendering.accept(e);
+        panelLog.accept(e);
+
+
     }
 
 

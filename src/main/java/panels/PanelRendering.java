@@ -3,11 +3,14 @@ package panels;
 import app.Point;
 import app.Task;
 import io.github.humbleui.jwm.Event;
+import io.github.humbleui.jwm.EventMouseButton;
+import io.github.humbleui.jwm.MouseButton;
 import io.github.humbleui.jwm.Window;
 import io.github.humbleui.skija.Canvas;
 import misc.CoordinateSystem2d;
 import misc.CoordinateSystem2i;
 import misc.Vector2d;
+import misc.Vector2i;
 
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -21,6 +24,7 @@ public class PanelRendering extends GridPanel {
      * Представление проблемы
      */
     public static Task task;
+    ArrayList<Point> points;
 
     /**
      * Панель управления
@@ -48,7 +52,7 @@ public class PanelRendering extends GridPanel {
         );
 
         // создаём массив случайных точек
-        ArrayList<Point> points = new ArrayList<>();
+        points = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             // получаем случайное множество
             Point.PointSet pointSet = ThreadLocalRandom.current().nextBoolean() ?
@@ -60,15 +64,7 @@ public class PanelRendering extends GridPanel {
 
     }
 
-    /**
-     * Обработчик событий
-     *
-     * @param e событие
-     */
-    @Override
-    public void accept(Event e) {
 
-    }
 
     /**
      * Метод под рисование в конкретной реализации
@@ -76,8 +72,52 @@ public class PanelRendering extends GridPanel {
      * @param canvas   область рисования
      * @param windowCS СК окна
      */
+
+
+
+
+
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
         task.paint(canvas, windowCS);
+    }
+
+    /**
+     * Обработчик событий
+     * при перегрузке обязателен вызов реализации предка
+     *
+     * @param e событие
+     */
+
+    /**
+     * Добавить точку
+     *
+     * @param pos      положение
+     * @param pointSet множество
+     */
+    public void addPoint(Vector2d pos, Point.PointSet pointSet) {
+        Point newPoint = new Point(pos, pointSet);
+        points.add(newPoint);
+
+
+    }
+    @Override
+    public void accept(Event e) {
+        // вызов обработчика предка
+        super.accept(e);
+        // если событие - это клик мышью
+        if (e instanceof EventMouseButton ee) {
+            // если последнее положение мыши сохранено и курсор был внутри
+            if (lastMove != null && lastInside){
+                if (ee.isPressed())
+                // обрабатываем клик по задаче
+                task.click(lastWindowCS.getRelativePos(lastMove), ee.getButton());
+                // перерисовываем окно
+                window.requestFrame();
+
+
+
+            }
+        }
     }
 }
