@@ -39,4 +39,9 @@ public class Colors {
      * Цвет текста
      */
     public static final int FIELD_TEXT_COLOR = Misc.getColor(255, 0, 0, 0);
+
+    /**
+     * Цвет кнопки
+     */
+    public static final int BUTTON_COLOR = Misc.getColor(80, 0, 0, 0);
 }
