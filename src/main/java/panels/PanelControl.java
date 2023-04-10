@@ -1,12 +1,18 @@
 package panels;
 
 import app.Task;
+import controls.Input;
+import controls.InputFactory;
+import controls.Label;
 import controls.MultiLineLabel;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.skija.Canvas;
 import misc.CoordinateSystem2i;
 
 import static app.Application.PANEL_PADDING;
+import static app.Colors.FIELD_BACKGROUND_COLOR;
+import static app.Colors.FIELD_TEXT_COLOR;
+
 /**
  * Панель управления
  */
@@ -42,8 +48,21 @@ public class PanelControl extends GridPanel {
                 6, 7, 0, 0, 6, 2, Task.TASK_TEXT,
                 false, true);
 
+        // добавление вручную
+        xLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
+                6, 7, 0, 2, 1, 1, "X", true, true);
+
+        xField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
+                6, 7, 1, 2, 2, 1, "0.0", true,
+                FIELD_TEXT_COLOR);
+
     }
 
+    /**
+     * Обработчик событий
+     *
+     * @param e событие
+     */
     /**
      * Обработчик событий
      *
@@ -53,8 +72,27 @@ public class PanelControl extends GridPanel {
     public void accept(Event e) {
         // вызываем обработчик предка
         super.accept(e);
+        // передаём обработку полю ввода X
+        xField.accept(e);
     }
 
+
+    /**
+     * Метод под рисование в конкретной реализации
+     *
+     * @param canvas   область рисования
+     * @param windowCS СК окна
+     */
+
+
+    /**
+     * заголовок для поля ввода x координаты
+     */
+    Label xLabel;
+    /**
+     * поле ввода x координаты
+     */
+    Input xField;
     /**
      * Метод под рисование в конкретной реализации
      *
@@ -64,5 +102,16 @@ public class PanelControl extends GridPanel {
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
         task.paint(canvas, windowCS);
+        xLabel.paint(canvas, windowCS);
+        xField.paint(canvas, windowCS);
     }
+
+    /**
+     * Обработчик событий
+     *
+     * @param e событие
+     */
+}
+
+
 }

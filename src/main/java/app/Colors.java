@@ -30,4 +30,13 @@ public class Colors {
     private Colors() {
         throw new AssertionError("Вызов этого конструктора запрещён");
     }
+
+    /**
+     * Цвет подложки поля ввода
+     */
+    public static final int FIELD_BACKGROUND_COLOR = Misc.getColor(255, 255, 255, 255);
+    /**
+     * Цвет текста
+     */
+    public static final int FIELD_TEXT_COLOR = Misc.getColor(255, 0, 0, 0);
 }
