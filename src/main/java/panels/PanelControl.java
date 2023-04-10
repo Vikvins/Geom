@@ -69,17 +69,22 @@ public class PanelControl extends GridPanel {
         labels.add(xLabel);
         Input xField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
                 6, 7, 1, 2, 2, 1, "0.0", true,
-                FIELD_TEXT_COLOR);
+                FIELD_TEXT_COLOR, true);
         inputs.add(xField);
         Label yLabel = new Label(window, false, backgroundColor, PANEL_PADDING,
                 6, 7, 3, 2, 1, 1, "Y", true, true);
         labels.add(yLabel);
         Input yField = InputFactory.getInput(window, false, FIELD_BACKGROUND_COLOR, PANEL_PADDING,
                 6, 7, 4, 2, 2, 1, "0.0", true,
-                FIELD_TEXT_COLOR);
+                FIELD_TEXT_COLOR, true);
         inputs.add(yField);
     }
 
+    /**
+     * Обработчик событий
+     *
+     * @param e событие
+     */
     /**
      * Обработчик событий
      *
@@ -96,7 +101,7 @@ public class PanelControl extends GridPanel {
 
             // событие нажатия мыши
         } else if (e instanceof EventMouseButton ee) {
-            if (!lastInside || !ee.isPressed())
+            if (!lastInside)
                 return;
 
             Vector2i relPos = lastWindowCS.getRelativePos(lastMove);
