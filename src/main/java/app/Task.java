@@ -11,6 +11,7 @@ import misc.Vector2i;
 import panels.PanelLog;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Класс задачи
@@ -99,6 +100,35 @@ public class Task {
      * @param pos      положение
      * @param pointSet множество
      */
+
+    /**
+     * Добавить случайные точки
+     *
+     * @param cnt кол-во случайных точек
+     */
+    public void addRandomPoints(int cnt) {
+        // если создавать точки с полностью случайными координатами,
+        // то вероятность того, что они совпадут крайне мала
+        // поэтому нужно создать вспомогательную малую целочисленную ОСК
+        // для получения случайной точки мы будем запрашивать случайную
+        // координату этой решётки (их всего 30х30=900).
+        // после нам останется только перевести координаты на решётке
+        // в координаты СК задачи
+        CoordinateSystem2i addGrid = new CoordinateSystem2i(30, 30);
+
+        // повторяем заданное количество раз
+        for (int i = 0; i < cnt; i++) {
+            // получаем случайные координаты на решётке
+            Vector2i gridPos = addGrid.getRandomCoords();
+            // получаем координаты в СК задачи
+            Vector2d pos = ownCS.getCoords(gridPos, addGrid);
+            // сработает примерно в половине случаев
+            if (ThreadLocalRandom.current().nextBoolean())
+                addPoint(pos, Point.PointSet.FIRST_SET);
+            else
+                addPoint(pos, Point.PointSet.SECOND_SET);
+        }
+    }
     public void addPoint(Vector2d pos, Point.PointSet pointSet) {
         Point newPoint = new Point(pos, pointSet);
         points.add(newPoint);
@@ -106,6 +136,25 @@ public class Task {
         PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
     }
 
+    /**
+     * Очистить задачу
+     */
+    public void clear() {
+        points.clear();
+    }
+
+    /**
+     * Решить задачу
+     */
+    public void solve() {
+        PanelLog.warning("Вызван метод solve()\n Пока что решения нет");
+    }
+    /**
+     * Отмена решения задачи
+     */
+    public void cancel() {
+
+    }
 
     /**
      * Клик мыши по пространству задачи

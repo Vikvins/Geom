@@ -51,16 +51,10 @@ public class PanelRendering extends GridPanel {
                 new Vector2d(-10.0, -10.0), new Vector2d(10.0, 10.0)
         );
 
-        // создаём массив случайных точек
-        points = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            // получаем случайное множество
-            Point.PointSet pointSet = ThreadLocalRandom.current().nextBoolean() ?
-                    Point.PointSet.FIRST_SET : Point.PointSet.SECOND_SET;
-            // добавляем точку в случайном месте ОСК в указанное множество
-            points.add(new Point(cs.getRandomCoords(), pointSet));
-        }
-        task = new Task(cs, points);
+        // создаём задачу без точек
+        task = new Task(cs, new ArrayList<>());
+        // добавляем в нё 10 случайных
+        task.addRandomPoints(10);
 
     }
 
