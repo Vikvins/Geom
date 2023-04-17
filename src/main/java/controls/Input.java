@@ -142,13 +142,6 @@ public class Input extends GridPanel {
      * @param e событие
      */
     @Override
-    /**
-     * Обработчик событий
-     * При перегрузке обязателен вызов реализации предка
-     *
-     * @param e событие
-     */
-    @Override
     public void accept(Event e) {
         // вызываем обработчик предка
         super.accept(e);

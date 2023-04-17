@@ -219,7 +219,6 @@ public class Application implements Consumer<Event> {
                         case DIGIT2 -> window.setOpacity(window.getOpacity() == 1f ? 0.5f : 1f);
                     }
                 else
-                        ...
                 switch (eventKey.getKey()) {
                     case ESCAPE -> {
                         window.close();
@@ -230,7 +229,7 @@ public class Application implements Consumer<Event> {
                     }
                     case TAB -> InputFactory.nextTab();
                 }
-    ...
+
             }
             }
 
@@ -268,38 +267,6 @@ public class Application implements Consumer<Event> {
         panelHelp.paint(canvas, windowCS);
         canvas.restore();
 
-
-        /**
-         * заголовок для поля ввода x координаты
-         */
-        Label xLabel;
-        /**
-         * поле ввода x координаты
-         */
-        Input xField;
-
-
-
-        /**
-         * Метод под рисование в конкретной реализации
-         *
-         * @param canvas   область рисования
-         * @param windowCS СК окна
-         */
-        @Override
-        public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
-            task.paint(canvas, windowCS);
-            xLabel.paint(canvas, windowCS);
-            xField.paint(canvas, windowCS);
-
-
-        }
-
     }
-
-
-
-
-
 
 }
