@@ -81,6 +81,15 @@ public class Colors {
      */
     public static final int DIALOG_BACKGROUND_COLOR = Misc.getColor(230, 70, 38, 83);
 
+    /**
+     * Цвет заливки панели
+     */
+    public static final int SCROLLER_BACKGROUND_COLOR = Misc.getColor(150, 83, 38, 70);
+    /**
+     * Цвет заливки панели
+     */
+    public static final int SCROLLER_COLOR = Misc.getColor(255, 83, 38, 70);
+
     public static final int HELP_TEXT = Misc.getColor(255, 255, 255, 255);
     /**
      * Цвет фона

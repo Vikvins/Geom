@@ -4,6 +4,7 @@ import controls.Input;
 import controls.InputFactory;
 import controls.Label;
 import dialogs.PanelInfo;
+import dialogs.PanelSelectFile;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.skija.EventFrameSkija;
 import io.github.humbleui.skija.Canvas;
@@ -90,6 +91,11 @@ public class Application implements Consumer<Event> {
     private boolean maximizedWindow;
 
     /**
+     * Панель выбора файла
+     */
+    private final PanelSelectFile panelSelectFile;
+
+    /**
      * Режимы работы приложения
      */
     public enum Mode {
@@ -147,7 +153,12 @@ public class Application implements Consumer<Event> {
                 window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING, 5, 3, 0, 2,
                 3, 1
         );
+
+
+        // Панель выбора файла
+        panelSelectFile = new PanelSelectFile(window, true, DIALOG_BACKGROUND_COLOR, PANEL_PADDING);
         // создаём панель помощи
+
         panelHelp = new PanelHelp(
                 window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING, 5, 3, 3, 2,
                 2, 1
@@ -268,8 +279,7 @@ public class Application implements Consumer<Event> {
                             }
                             switch (currentMode) {
                                 case INFO -> panelInfo.accept(e);
-                                case FILE -> {
-                                }
+                                case FILE -> panelSelectFile.accept(e);
                                 case WORK -> {
                                     // передаём события на обработку панелям
                                     panelControl.accept(e);
@@ -311,6 +321,10 @@ public class Application implements Consumer<Event> {
         panelLog.paint(canvas, windowCS);
         panelHelp.paint(canvas, windowCS);
         // рисуем диалоги
+        switch (currentMode) {
+            case INFO -> panelInfo.paint(canvas, windowCS);
+            case FILE -> panelSelectFile.paint(canvas, windowCS);
+        }
 
 
     }
