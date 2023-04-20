@@ -4,10 +4,7 @@ import app.Point;
 import app.Task;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.humbleui.jwm.Event;
-import io.github.humbleui.jwm.EventMouseButton;
-import io.github.humbleui.jwm.MouseButton;
-import io.github.humbleui.jwm.Window;
+import io.github.humbleui.jwm.*;
 import io.github.humbleui.skija.Canvas;
 import misc.CoordinateSystem2d;
 import misc.CoordinateSystem2i;
@@ -152,18 +149,29 @@ public class PanelRendering extends GridPanel {
      *
      * @param e событие
      */
+    /**
+     * Обработчик событий
+     * при перегрузке обязателен вызов реализации предка
+     *
+     * @param e событие
+     */
     @Override
     public void accept(Event e) {
-        // вызываем обработчик предка
+        // вызов обработчика предка
         super.accept(e);
+        // если событие - это клик мышью
         if (e instanceof EventMouseButton ee) {
             // если последнее положение мыши сохранено и курсор был внутри
-            if (lastMove != null && lastInside) {
+            if (lastMove != null && lastInside && ee.isPressed()) {
                 // если событие - нажатие мыши
                 if (ee.isPressed())
                     // обрабатываем клик по задаче
                     task.click(lastWindowCS.getRelativePos(lastMove), ee.getButton());
             }
+        } else if (e instanceof EventMouseScroll ee) {
+            if (lastMove != null && lastInside)
+                task.scale(ee.getDeltaY(), lastWindowCS.getRelativePos(lastMove));
+            window.requestFrame();
         }
     }
 }

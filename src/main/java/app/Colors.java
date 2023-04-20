@@ -46,6 +46,11 @@ public class Colors {
     public static final int BUTTON_COLOR = Misc.getColor(80, 0, 0, 0);
 
     /**
+     * Цвет сетки
+     */
+    public static final int TASK_GRID_COLOR = Misc.getColor(64, 255, 255, 255);
+
+    /**
      * Цвет пересечения
      */
     public static final int CROSSED_COLOR = Misc.getColor(200, 0, 255, 255);
