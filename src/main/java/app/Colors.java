@@ -75,6 +75,12 @@ public class Colors {
     /**
      * Цвет текста
      */
+
+    /**
+     * Цвет заливки панели
+     */
+    public static final int DIALOG_BACKGROUND_COLOR = Misc.getColor(230, 70, 38, 83);
+
     public static final int HELP_TEXT = Misc.getColor(255, 255, 255, 255);
     /**
      * Цвет фона

@@ -3,6 +3,7 @@ package app;
 import controls.Input;
 import controls.InputFactory;
 import controls.Label;
+import dialogs.PanelInfo;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.jwm.skija.EventFrameSkija;
 import io.github.humbleui.skija.Canvas;
@@ -26,6 +27,12 @@ public class Application implements Consumer<Event> {
     /**
      * окно приложения
      */
+
+    /**
+     * Панель информации
+     */
+    private final PanelInfo panelInfo;
+
     private final Window window;
 
     /**
@@ -82,6 +89,29 @@ public class Application implements Consumer<Event> {
      */
     private boolean maximizedWindow;
 
+    /**
+     * Режимы работы приложения
+     */
+    public enum Mode {
+        /**
+         * Основной режим работы
+         */
+        WORK,
+        /**
+         * Окно информации
+         */
+        INFO,
+        /**
+         * работа с файлами
+         */
+        FILE
+    }
+
+    /**
+     * Текущий режим(по умолчанию рабочий)
+     */
+    public static Mode currentMode = Mode.WORK;
+
 
     /**
      * Конструктор окна приложения
@@ -121,7 +151,12 @@ public class Application implements Consumer<Event> {
         panelHelp = new PanelHelp(
                 window, true, PANEL_BACKGROUND_COLOR, PANEL_PADDING, 5, 3, 3, 2,
                 2, 1
+
+
         );
+
+        // панель информации
+        panelInfo = new PanelInfo(window, true, DIALOG_BACKGROUND_COLOR, PANEL_PADDING);
 
 
         // задаём обработчиком событий текущий объект
@@ -219,31 +254,46 @@ public class Application implements Consumer<Event> {
                         case DIGIT2 -> window.setOpacity(window.getOpacity() == 1f ? 0.5f : 1f);
                     }
                 else
-                switch (eventKey.getKey()) {
-                    case ESCAPE -> {
-                        window.close();
-                        // завершаем обработку, иначе уже разрушенный контекст
-                        // будет передан панелям
-                        return;
-
+                    switch (eventKey.getKey()) {
+                        case ESCAPE -> {
+                            // если сейчас основной режим
+                            if (currentMode.equals(Mode.WORK)) {
+                                // закрываем окно
+                                window.close();
+                                // завершаем обработку, иначе уже разрушенный контекст
+                                // будет передан панелям
+                                return;
+                            } else if (currentMode.equals(Mode.INFO)) {
+                                currentMode = Mode.WORK;
+                            }
+                            switch (currentMode) {
+                                case INFO -> panelInfo.accept(e);
+                                case FILE -> {
+                                }
+                                case WORK -> {
+                                    // передаём события на обработку панелям
+                                    panelControl.accept(e);
+                                    panelRendering.accept(e);
+                                    panelLog.accept(e);
+                                }
+                            }
+                        }
                     }
-                    case TAB -> InputFactory.nextTab();
-                }
 
+                panelControl.accept(e);
+                panelRendering.accept(e);
+                panelLog.accept(e);
             }
-            }
-
-        panelControl.accept(e);
-        panelRendering.accept(e);
-        panelLog.accept(e);
+        }
     }
 
 
-
-
-
-
-
+    /**
+     * Рисование
+     *
+     * @param canvas   низкоуровневый инструмент рисования примитивов от Skija
+     * @param windowCS СК окна
+     */
     /**
      * Рисование
      *
@@ -260,8 +310,8 @@ public class Application implements Consumer<Event> {
         panelControl.paint(canvas, windowCS);
         panelLog.paint(canvas, windowCS);
         panelHelp.paint(canvas, windowCS);
-        canvas.restore();
+        // рисуем диалоги
+
 
     }
-
 }
