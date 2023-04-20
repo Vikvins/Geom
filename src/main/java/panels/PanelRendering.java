@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static app.Fonts.FONT12;
+
 
 /**
  * Панель рисования
@@ -70,15 +72,13 @@ public class PanelRendering extends GridPanel {
      * @param canvas   область рисования
      * @param windowCS СК окна
      */
-
-
-
-
-
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
         task.paint(canvas, windowCS);
+        if (lastInside && lastMove != null)
+            task.paintMouse(canvas, windowCS, FONT12, lastWindowCS.getRelativePos(lastMove));
     }
+
 
     /**
      * Обработчик событий
