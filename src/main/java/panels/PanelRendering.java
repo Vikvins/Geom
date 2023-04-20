@@ -6,10 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.humbleui.jwm.*;
 import io.github.humbleui.skija.Canvas;
-import misc.CoordinateSystem2d;
-import misc.CoordinateSystem2i;
-import misc.Vector2d;
-import misc.Vector2i;
+import misc.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +45,7 @@ public class PanelRendering extends GridPanel {
             int gridX, int gridY, int colspan, int rowspan
     ) {
         super(window, drawBG, color, padding, gridWidth, gridHeight, gridX, gridY, colspan, rowspan);
-
+        fpsStats = new Stats();
         // ОСК от [-10.0,-10.0] до [10.0,10.0]
         CoordinateSystem2d cs = new CoordinateSystem2d(
                 new Vector2d(-10.0, -10.0), new Vector2d(10.0, 10.0)
@@ -72,9 +69,19 @@ public class PanelRendering extends GridPanel {
      * @param canvas   область рисования
      * @param windowCS СК окна
      */
+    /**
+     * Метод под рисование в конкретной реализации
+     *
+     * @param canvas   область рисования
+     * @param windowCS СК окна
+     */
     @Override
     public void paintImpl(Canvas canvas, CoordinateSystem2i windowCS) {
+        // рисуем задачу
         task.paint(canvas, windowCS);
+        // рисуем статистику фпс
+        fpsStats.paint(canvas, windowCS, FONT12, padding);
+        // рисуем перекрестие, если мышь внутри области рисования этой панели
         if (lastInside && lastMove != null)
             task.paintMouse(canvas, windowCS, FONT12, lastWindowCS.getRelativePos(lastMove));
     }
@@ -103,6 +110,12 @@ public class PanelRendering extends GridPanel {
     /**
      * Сохранить файл
      */
+
+    /**
+     * Статистика fps
+     */
+    private final Stats fpsStats;
+
     public static void save() {
         String path = "src/main/resources/conf.json";
         try {

@@ -243,12 +243,7 @@ public class Application implements Consumer<Event> {
 
 
 
-    /**
-     * Рисование
-     *
-     * @param canvas   низкоуровневый инструмент рисования примитивов от Skija
-     * @param windowCS СК окна
-     */
+
     /**
      * Рисование
      *
