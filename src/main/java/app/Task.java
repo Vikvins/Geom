@@ -147,7 +147,70 @@ import static app.Colors.*;
     public Vector2d getRealPos(int x, int y, CoordinateSystem2i windowCS) {
         return ownCS.getCoords(x, y, windowCS);
     }
+    /**
+     * Составление массива отрезков для рисования окружности в координатах окна
+     * У движка есть готовый метод рисования набора отрезков canvas.drawLines(). Этому методу передать массив вещественных чисел float размером в четыре раза большим, чем кол-во линий. В этом массиве все данные идут подряд: сначала x координата первой точки, потом y координата, потом x координата второй точки, потом y координата, следующие четыре элемента точно также описывают второй отрезок и т.д.
+     *
+     * @param centre центр окружности
+     * @param rad    радиус
+     * @return набор точек окружности
+     */
+    public float[] arrCircle(Vector2d centre, double rad) {
+        // радиус вдоль оси x
+        float radX = (float) (rad);
+        // радиус вдоль оси y
+        float radY = (float) (rad);
+        // кол-во отсчётов цикла
+        int loopCnt = 100;
+        // создаём массив координат опорных точек
+        float[] points = new float[loopCnt * 4];
+        // запускаем цикл
+        for (int i = 0; i < loopCnt; i++) {
+            // координаты первой точки в СК окна
+            double tmpXold = centre.x + radX * Math.cos(2 * Math.PI / loopCnt * i);
+            double tmpYold = centre.y + radY * Math.sin(2 * Math.PI / loopCnt * i);
+            Vector2i tmp = lastWindowCS.getCoords(tmpXold, tmpYold, ownCS);
+            // записываем x
+            points[i * 4] = (float) tmp.x;
+            // записываем y
+            points[i * 4 + 1] = lastWindowCS.getMax().y - (float) tmp.y;
+            // координаты второй точки в СК окна
+            tmp = lastWindowCS.getCoords(centre.x + radX * Math.cos(2 * Math.PI / loopCnt * (i + 1)), centre.y + radY * Math.sin(2 * Math.PI / loopCnt * (i + 1)), ownCS);
+            // записываем x
+            points[i * 4 + 2] = (float) tmp.x;
+            // записываем y
+            points[i * 4 + 3] = lastWindowCS.getMax().y - (float) tmp.y;
+        }
+        return points;
+    }
+    /**
+     * Добавить окружность
+     *
+     * @param center положение центра
+     * @param radius радиус
+     */
+    public void addCircle(Vector2d center, double radius) {
+        solved = false;
+        Circle newCircle = new Circle(center, radius);
+        //circles.add(newCircle);
+        PanelLog.info("окружность " + newCircle + " добавлена в задачу");
+    }
 
+    /**
+     * Добавить случайные окружности
+     *
+     * @param cnt кол-во случайных окружностей
+     */
+    public void addRandomCircles(int cnt) {
+        // повторяем заданное количество раз
+        for (int i = 0; i < cnt; i++) {
+            // получаем случайные координаты центра
+            Vector2d pos = ownCS.getRandomCoords();
+            //получаем случайный радиус
+            double tmpR = ThreadLocalRandom.current().nextDouble(0, Math.min(ownCS.getSize().x, ownCS.getSize().y) / 2);
+            addCircle(pos, tmpR);
+        }
+    }
     /**
      * Рисование курсора мыши
      *
@@ -319,30 +382,23 @@ import static app.Colors.*;
          */
 
         public void solve() {
-            // очищаем списки
-            crossed.clear();
-            single.clear();
 
+            Point centr;
+            double rad = 10000000;
             // перебираем пары точек
             for (int i = 0; i < points.size(); i++) {
+                Point cent = points.get(i);
+                double dist = 0;
                 for (int j = i + 1; j < points.size(); j++) {
-                    // сохраняем точки
                     Point a = points.get(i);
-                    Point b = points.get(j);
-                    // если точки совпадают по положению
-                    if (a.pos.equals(b.pos) && !a.pointSet.equals(b.pointSet)) {
-                        if (!crossed.contains(a)){
-                            crossed.add(a);
-                            crossed.add(b);
-                        }
+                    if(Math.sqrt((cent.pos.x-a.pos.x)*(cent.pos.x-a.pos.x) + (cent.pos.y-a.pos.y)*(cent.pos.y-a.pos.y))>dist){
+                        dist = (cent.pos.x-a.pos.x)*(cent.pos.x-a.pos.x) + (cent.pos.y-a.pos.y)*(cent.pos.y-a.pos.y);
+                        centr = cent;
                     }
                 }
+                if(dist < rad) rad = dist;
             }
 
-            /// добавляем вс
-            for (Point point : points)
-                if (!crossed.contains(point))
-                    single.add(point);
 
             // задача решена
             solved = true;
