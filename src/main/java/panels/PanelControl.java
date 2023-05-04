@@ -95,7 +95,7 @@ public class PanelControl extends GridPanel {
 
         Button addToFirstSet = new Button(
                 window, false, backgroundColor, PANEL_PADDING,
-                6, 7, 0, 3, 3, 1, "Добавить в первое\nмножество",
+                6, 7, 0, 3, 6, 1, "Добавить в точку",
                 true, true);
         addToFirstSet.setOnClick(() -> {
             // если числа введены верно
@@ -110,23 +110,7 @@ public class PanelControl extends GridPanel {
         });
         buttons.add(addToFirstSet);
 
-        Button addToSecondSet = new Button(
-                window, false, backgroundColor, PANEL_PADDING,
-                6, 7, 3, 3, 3, 1, "Добавить во второе\nмножество",
-                true, true);
-        addToSecondSet.setOnClick(() -> {
-            // если числа введены верно
-            if (!xField.hasValidDoubleValue()) {
-                PanelLog.warning("X координата введена неверно");
-            } else if (!yField.hasValidDoubleValue())
-                PanelLog.warning("Y координата введена неверно");
-            else {
-                PanelRendering.task.addPoint(
-                        new Vector2d(xField.doubleValue(), yField.doubleValue()), Point.PointSet.SECOND_SET
-                );
-            }
-        });
-        buttons.add(addToSecondSet);
+
 
 
         // случайное добавление
@@ -185,9 +169,7 @@ public class PanelControl extends GridPanel {
         solve.setOnClick(() -> {
             if (!PanelRendering.task.isSolved()) {
                 PanelRendering.task.solve();
-                String s = "Задача решена\n" +
-                        "Пересечений: " + PanelRendering.task.getCrossed().size() / 2 + "\n" +
-                        "Отдельных точек: " + PanelRendering.task.getSingle().size();
+                String s = "Задача решена\n";
 
                 PanelInfo.show(s + "\n\nНажмите Esc, чтобы вернуться");
                 PanelLog.success(s);

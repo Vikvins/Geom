@@ -19,38 +19,27 @@ import java.util.concurrent.ThreadLocalRandom;
 import static app.Colors.*;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, property = "@class")
-    public class Task {
+public class Task {
 
-
-
-        public static final String TASK_TEXT = """
+    public static final String TASK_TEXT = """
             ПОСТАНОВКА ЗАДАЧИ:
-            Заданы два множества точек в вещественном
-            пространстве. Требуется построить пересечение
-            и разность этих множеств""";
+            На плоскости задано множество точек.
+            Найти окружность наименьшей площади,
+            внутри которой находятся все точки множества.
+            Если таких окружностей несколько, найти любую.
+            В качестве ответа нарисовать найденную окружность.""";
 
 
-
-
-        @Getter
-        @JsonIgnore
-        private final ArrayList<Point> crossed;
-        /**
-         * Список точек в разности
-         */
-        @Getter
-        @JsonIgnore
-        private final ArrayList<Point> single;
-        /**
-         * Вещественная система координат задачи
-         */
-        @Getter
-        private final CoordinateSystem2d ownCS;
-        /**
-         * Список точек
-         */
-        @Getter
-        private final ArrayList<Point> points;
+    /**
+     * Вещественная система координат задачи
+     */
+    @Getter
+    private final CoordinateSystem2d ownCS;
+    /**
+     * Список точек
+     */
+    @Getter
+    private final ArrayList<Point> points;
     /**
      * последняя СК окна
      */
@@ -68,34 +57,32 @@ import static app.Colors.*;
 
     private static final int POINT_SIZE = 3;
 
-        /**
-         * Задача
-         *
-         * @param ownCS  СК задачи
-         * @param points массив точек
-         */
-        @JsonCreator
-        public Task(
-                @JsonProperty("ownCS") CoordinateSystem2d ownCS,
-                @JsonProperty("points") ArrayList<Point> points
-        ) {
-            this.ownCS = ownCS;
-            this.points = points;
-            this.crossed = new ArrayList<>();
-            this.single = new ArrayList<>();
-        }
+    /**
+     * Задача
+     *
+     * @param ownCS  СК задачи
+     * @param points массив точек
+     */
+    @JsonCreator
+    public Task(
+            @JsonProperty("ownCS") CoordinateSystem2d ownCS,
+            @JsonProperty("points") ArrayList<Point> points
+    ) {
+        this.ownCS = ownCS;
+        this.points = points;
+    }
 
-        /**
-         * Флаг, решена ли задача
-         */
-        private boolean solved;
+    /**
+     * Флаг, решена ли задача
+     */
+    private boolean solved;
 
-        /**
-         * Рисование задачи
-         *
-         * @param canvas   область рисования
-         * @param windowCS СК окна
-         */
+    /**
+     * Рисование задачи
+     *
+     * @param canvas   область рисования
+     * @param windowCS СК окна
+     */
 
     /**
      * Рисование сетки
@@ -147,6 +134,7 @@ import static app.Colors.*;
     public Vector2d getRealPos(int x, int y, CoordinateSystem2i windowCS) {
         return ownCS.getCoords(x, y, windowCS);
     }
+
     /**
      * Составление массива отрезков для рисования окружности в координатах окна
      * У движка есть готовый метод рисования набора отрезков canvas.drawLines(). Этому методу передать массив вещественных чисел float размером в четыре раза большим, чем кол-во линий. В этом массиве все данные идут подряд: сначала x координата первой точки, потом y координата, потом x координата второй точки, потом y координата, следующие четыре элемента точно также описывают второй отрезок и т.д.
@@ -183,6 +171,7 @@ import static app.Colors.*;
         }
         return points;
     }
+
     /**
      * Добавить окружность
      *
@@ -211,6 +200,7 @@ import static app.Colors.*;
             addCircle(pos, tmpR);
         }
     }
+
     /**
      * Рисование курсора мыши
      *
@@ -249,20 +239,14 @@ import static app.Colors.*;
         // создаём перо
         try (var paint = new Paint()) {
             for (Point p : points) {
-                if (!solved) {
-                    paint.setColor(p.getColor());
-                } else {
-                    if (crossed.contains(p))
-                        paint.setColor(CROSSED_COLOR);
-                    else
-                        paint.setColor(SUBTRACTED_COLOR);
-                }
+                paint.setColor(p.getColor());
                 // y-координату разворачиваем, потому что у СК окна ось y направлена вниз,
                 // а в классическом представлении - вверх
                 Vector2i windowPos = windowCS.getCoords(p.pos.x, p.pos.y, ownCS);
                 // рисуем точку
                 canvas.drawRect(Rect.makeXYWH(windowPos.x - POINT_SIZE, windowPos.y - POINT_SIZE, POINT_SIZE * 2, POINT_SIZE * 2), paint);
             }
+
         }
         canvas.restore();
     }
@@ -314,12 +298,10 @@ import static app.Colors.*;
         // получаем положение на экране
         Vector2d taskPos = ownCS.getCoords(pos, lastWindowCS);
         // если левая кнопка мыши, добавляем в первое множество
-        if (mouseButton.equals(MouseButton.PRIMARY)) {
-            addPoint(taskPos, Point.PointSet.FIRST_SET);
-            // если правая, то во второе
-        } else if (mouseButton.equals(MouseButton.SECONDARY)) {
-            addPoint(taskPos, Point.PointSet.SECOND_SET);
-        }
+
+        addPoint(taskPos, Point.PointSet.FIRST_SET);
+        // если правая, то во второе
+
     }
     /**
      * Добавить точку
@@ -350,24 +332,24 @@ import static app.Colors.*;
             // получаем координаты в СК задачи
             Vector2d pos = ownCS.getCoords(gridPos, addGrid);
             // сработает примерно в половине случаев
-            if (ThreadLocalRandom.current().nextBoolean())
-                addPoint(pos, Point.PointSet.FIRST_SET);
-            else
-                addPoint(pos, Point.PointSet.SECOND_SET);
+
+            addPoint(pos, Point.PointSet.FIRST_SET);
+
         }
     }
-        /**
-         * Добавить точку
-         *
-         * @param pos      положение
-         * @param pointSet множество
-         */
-        public void addPoint(Vector2d pos, Point.PointSet pointSet) {
-            solved = false;
-            Point newPoint = new Point(pos, pointSet);
-            points.add(newPoint);
-            PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
-        }
+
+    /**
+     * Добавить точку
+     *
+     * @param pos      положение
+     * @param pointSet множество
+     */
+    public void addPoint(Vector2d pos, Point.PointSet pointSet) {
+        solved = false;
+        Point newPoint = new Point(pos, pointSet);
+        points.add(newPoint);
+        PanelLog.info("точка " + newPoint + " добавлена в " + newPoint.getSetName());
+    }
 
     /**
      * Очистить задачу
@@ -377,64 +359,61 @@ import static app.Colors.*;
         solved = false;
     }
 
-        /**
-         * Решить задачу
-         */
+    /**
+     * Решить задачу
+     */
 
-        public void solve() {
+    public void solve() {
 
-            Point centr;
-            double rad = 10000000;
-            // перебираем пары точек
-            for (int i = 0; i < points.size(); i++) {
-                Point cent = points.get(i);
-                double dist = 0;
-                for (int j = i + 1; j < points.size(); j++) {
-                    Point a = points.get(i);
-                    if(Math.sqrt((cent.pos.x-a.pos.x)*(cent.pos.x-a.pos.x) + (cent.pos.y-a.pos.y)*(cent.pos.y-a.pos.y))>dist){
-                        dist = (cent.pos.x-a.pos.x)*(cent.pos.x-a.pos.x) + (cent.pos.y-a.pos.y)*(cent.pos.y-a.pos.y);
-                        centr = cent;
-                    }
+        Point centr;
+        double rad = 10000000;
+        // перебираем пары точек
+        for (int i = 0; i < points.size(); i++) {
+            Point cent = points.get(i);
+            double dist = 0;
+            for (int j = i + 1; j < points.size(); j++) {
+                Point a = points.get(i);
+                if (Math.sqrt((cent.pos.x - a.pos.x) * (cent.pos.x - a.pos.x) + (cent.pos.y - a.pos.y) * (cent.pos.y - a.pos.y)) > dist) {
+                    dist = (cent.pos.x - a.pos.x) * (cent.pos.x - a.pos.x) + (cent.pos.y - a.pos.y) * (cent.pos.y - a.pos.y);
+                    centr = cent;
                 }
-                if(dist < rad) rad = dist;
             }
-
-
-            // задача решена
-            solved = true;
+            if (dist < rad) rad = dist;
         }
 
 
-        /**
-         * Отмена решения задачи
-         */
-        public void cancel() {
-            solved = false;
-        }
-
-        /**
-         * проверка, решена ли задача
-         *
-         * @return флаг
-         */
-        public boolean isSolved() {
-            return solved;
-        }
-
-        /**
-         * Список точек в пересечении
-         */
+        // задача решена
+        solved = true;
+    }
 
 
+    /**
+     * Отмена решения задачи
+     */
+    public void cancel() {
+        solved = false;
+    }
+
+    /**
+     * проверка, решена ли задача
+     *
+     * @return флаг
+     */
+    public boolean isSolved() {
+        return solved;
+    }
+
+    /**
+     * Список точек в пересечении
+     */
 
 
-
-        /**
-         * Клик мыши по пространству задачи
-         *
-         * @param pos         положение мыши
-         * @param mouseButton кнопка мыши
-         */
+    /**
+     * Клик мыши по пространству задачи
+     *
+     * @param pos         положение мыши
+     * @param mouseButton кнопка мыши
+     */
 
 
 }

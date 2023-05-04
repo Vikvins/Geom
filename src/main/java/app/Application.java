@@ -288,22 +288,17 @@ public class Application implements Consumer<Event> {
                                 }
                             }
                         }
+                        case TAB -> InputFactory.nextTab();
                     }
-
-                panelControl.accept(e);
-                panelRendering.accept(e);
-                panelLog.accept(e);
             }
         }
+        panelControl.accept(e);
+        panelRendering.accept(e);
+        panelLog.accept(e);
+
     }
 
 
-    /**
-     * Рисование
-     *
-     * @param canvas   низкоуровневый инструмент рисования примитивов от Skija
-     * @param windowCS СК окна
-     */
     /**
      * Рисование
      *
