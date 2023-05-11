@@ -10,6 +10,7 @@ import java.util.Objects;
 /**
  * Класс точки
  * *
+ * *
  */
 public class Point {
     /**

@@ -25,10 +25,10 @@ import static app.Colors.FIELD_TEXT_COLOR;
 public class PanelControl extends GridPanel {
     /**
      * Текст задания
-     * *
      */
     MultiLineLabel task;
     /**
+     * *
      * Заголовки
      */
     public List<Label> labels;
