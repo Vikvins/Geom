@@ -32,6 +32,7 @@ public class Task {
 
     /**
      * Вещественная система координат задачи
+     * *
      */
     @Getter
     private final CoordinateSystem2d ownCS;

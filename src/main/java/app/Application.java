@@ -23,6 +23,7 @@ import static app.Colors.*;
 
 /**
  * Класс окна приложения
+ * *
  */
 public class Application implements Consumer<Event> {
     /**
